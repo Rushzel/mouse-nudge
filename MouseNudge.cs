@@ -95,7 +95,8 @@ static class MouseNudge
         using (var font = new Font(IconFont(), size, FontStyle.Regular, GraphicsUnit.Pixel))
         using (var brush = new SolidBrush(colour))
         {
-            graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            // Whole pixels only: anti-aliasing greys the curved bottom so it looks dimmer than the straight top and sides.
+            graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
             graphics.DrawString(CupGlyph, font, brush, 0, size / 8, StringFormat.GenericTypographic);
             if (on)
             {

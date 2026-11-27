@@ -7,7 +7,7 @@
 
 A coffee cup in the taskbar that keeps your PC from going idle. Click it on, click it off.
 
-<p align="center"><img src="docs/taskbar.png" width="500" alt="The Mouse Nudge coffee cup in the Windows taskbar corner, gold with steam because it's on"></p>
+<p align="center"><img src="docs/taskbar.png" width="500" alt="The Mouse Nudge coffee cup in the Windows taskbar corner, with steam because it's on"></p>
 
 I wanted a one-click way to keep my PC from going idle when I step away, sitting next to my other taskbar toggle, [Resolution Switch](https://github.com/Rushzel/resolution-switch). I also have an OLED, so I didn't want something that leaves the screen lit for hours. This one blacks the screen out while it keeps things awake.
 
@@ -23,13 +23,13 @@ It needs .NET Framework 4.8, which Windows 10 (1903 and later) and Windows 11 al
 
 ## Use it
 
-- **Left-click** turns it on or off. A gold cup with steam means on, an empty outline means off.
+- **Left-click** turns it on or off. Steam over the cup means on, a plain cup means off. It's drawn with the same icon font as the Windows taskbar, so it matches the icons next to it.
 - **Right-click** to turn it on or off, turn on Start with Windows, or exit.
 - **Hover** to see whether it's on.
 
 It always starts off.
 
-<p align="center"><img src="docs/taskbar-off.png" width="500" alt="The same taskbar with the cup as an empty outline because it's off"></p>
+<p align="center"><img src="docs/taskbar-off.png" width="500" alt="The same taskbar with the cup and no steam because it's off"></p>
 
 ## What it does while it's on
 

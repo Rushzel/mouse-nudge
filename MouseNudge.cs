@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -30,6 +30,7 @@ static class MouseNudge
     const string ThemeKey = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
     const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
     const string RunValue = "MouseNudge";
+    const string CupGlyph = "";
     const uint KeepSystemAwake = 0x80000001;
     const uint ReleaseAwake = 0x80000000;
     const int NudgeEveryMs = 60000;
@@ -81,53 +82,35 @@ static class MouseNudge
         return !(setting is int) || (int)setting == 1;
     }
 
-    static GraphicsPath Cup(float left, float top, float right, float bottom, float radius)
+    static FontFamily IconFont()
     {
-        var path = new GraphicsPath();
-        path.AddLine(left, top, right, top);
-        path.AddLine(right, top, right, bottom - radius);
-        path.AddArc(right - 2 * radius, bottom - 2 * radius, 2 * radius, 2 * radius, 0, 90);
-        path.AddArc(left, bottom - 2 * radius, 2 * radius, 2 * radius, 90, 90);
-        path.CloseFigure();
-        return path;
+        return FontFamily.Families.FirstOrDefault(f => f.Name == "Segoe Fluent Icons") ?? new FontFamily("Segoe MDL2 Assets");
     }
 
-    static GraphicsPath Handle(float x, float top, float radius)
+    // The font's own cup, so line weight and colour match Resolution Switch and the system icons; on only adds steam.
+    static Bitmap DrawCup(bool on, int size, Color colour)
     {
-        var path = new GraphicsPath();
-        path.AddLine(x, top, x + radius, top);
-        path.AddArc(x, top, 2 * radius, 2 * radius, 270, 180);
-        path.AddLine(x + radius, top + 2 * radius, x, top + 2 * radius);
-        return path;
+        var bitmap = new Bitmap(size, size);
+        using (var graphics = Graphics.FromImage(bitmap))
+        using (var font = new Font(IconFont(), size, FontStyle.Regular, GraphicsUnit.Pixel))
+        using (var brush = new SolidBrush(colour))
+        {
+            graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            graphics.DrawString(CupGlyph, font, brush, 0, size / 8, StringFormat.GenericTypographic);
+            if (on)
+            {
+                // Whole-pixel wisps: anti-aliased curves this small turn grey and blurry next to the glyph's crisp lines.
+                graphics.ScaleTransform(size / 16f, size / 16f);
+                foreach (int x in new[] { 4, 8 }) graphics.FillRectangle(brush, x, 0, 1, 3);
+            }
+        }
+        return bitmap;
     }
 
     static Icon DrawIcon(bool on)
     {
-        bool light = TaskbarIsLight();
-        var colour = on ? (light ? Color.FromArgb(0x9a, 0x6b, 0x00) : Color.FromArgb(0xff, 0xd7, 0x5e))
-                        : (light ? Color.Black : Color.FromArgb(0xec, 0xe7, 0xd8));
-        int size = SystemInformation.SmallIconSize.Width;
-        using (var bitmap = new Bitmap(size, size))
-        using (var graphics = Graphics.FromImage(bitmap))
-        using (var brush = new SolidBrush(colour))
-        using (var pen = new Pen(colour, 2f))
-        using (var steam = new Pen(colour, 1.7f) { StartCap = LineCap.Round, EndCap = LineCap.Round })
-        {
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.ScaleTransform(size / 16f, size / 16f);
-            if (on)
-            {
-                using (var cup = Cup(1, 6, 12, 15, 4)) graphics.FillPath(brush, cup);
-                using (var handle = Handle(12, 7.5f, 1.6f)) graphics.DrawPath(pen, handle);
-                foreach (float x in new[] { 4.5f, 8.5f }) graphics.DrawBezier(steam, x, 0.8f, x - 1f, 2f, x + 1f, 3f, x, 4.4f);
-            }
-            else
-            {
-                using (var cup = Cup(2, 7, 11, 14, 3)) graphics.DrawPath(pen, cup);
-                using (var handle = Handle(11, 8, 1.5f)) graphics.DrawPath(pen, handle);
-            }
+        using (var bitmap = DrawCup(on, SystemInformation.SmallIconSize.Width, TaskbarIsLight() ? Color.Black : Color.White))
             return Icon.FromHandle(bitmap.GetHicon());
-        }
     }
 
     static void ShowState()

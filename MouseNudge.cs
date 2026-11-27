@@ -88,21 +88,22 @@ static class MouseNudge
     }
 
     // The font's own cup, so line weight and colour match Resolution Switch and the system icons; on only adds steam.
+    // At 11/12 size its bottom lands on the same row as Resolution Switch and Mouse Battery, leaving room above for steam.
     static Bitmap DrawCup(bool on, int size, Color colour)
     {
         var bitmap = new Bitmap(size, size);
         using (var graphics = Graphics.FromImage(bitmap))
-        using (var font = new Font(IconFont(), size, FontStyle.Regular, GraphicsUnit.Pixel))
+        using (var font = new Font(IconFont(), 16f * 11 / 12, FontStyle.Regular, GraphicsUnit.Pixel))
         using (var brush = new SolidBrush(colour))
         {
             // Whole pixels only: anti-aliasing greys the curved bottom so it looks dimmer than the straight top and sides.
             graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
-            graphics.DrawString(CupGlyph, font, brush, 0, size / 8, StringFormat.GenericTypographic);
+            graphics.ScaleTransform(size / 16f, size / 16f);
+            graphics.DrawString(CupGlyph, font, brush, 0, 1.4f, StringFormat.GenericTypographic);
             if (on)
             {
                 // Whole-pixel wisps: anti-aliased curves this small turn grey and blurry next to the glyph's crisp lines.
-                graphics.ScaleTransform(size / 16f, size / 16f);
-                foreach (int x in new[] { 4, 8 }) graphics.FillRectangle(brush, x, 0, 1, 3);
+                foreach (int x in new[] { 4, 8 }) graphics.FillRectangle(brush, x, 0, 1, 2);
             }
         }
         return bitmap;

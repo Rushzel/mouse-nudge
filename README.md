@@ -1,5 +1,7 @@
 # Mouse Nudge
 
+> **Mouse Nudge is now part of [Nook](https://github.com/Rushzel/nook)**, one app with the same tray icons and a window for every setting. This repository is archived; new versions come out there.
+
 [![Latest release](https://img.shields.io/github/v/release/Rushzel/mouse-nudge)](https://github.com/Rushzel/mouse-nudge/releases/latest)
 [![Build](https://img.shields.io/github/actions/workflow/status/Rushzel/mouse-nudge/build.yml?branch=main)](https://github.com/Rushzel/mouse-nudge/actions)
 ![Windows 10 and 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4)
